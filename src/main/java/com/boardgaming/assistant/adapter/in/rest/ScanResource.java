@@ -30,12 +30,6 @@ public class ScanResource {
         }
 
         ScanResponse result = resolveBarcodeUseCase.execute(request);
-        if (result == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(new ErrorResponse("No game found for barcode: " + request.barcode()))
-                    .build();
-        }
-
         return Response.ok(result).build();
     }
 }

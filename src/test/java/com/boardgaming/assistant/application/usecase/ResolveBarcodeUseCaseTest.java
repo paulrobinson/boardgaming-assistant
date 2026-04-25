@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,10 +42,13 @@ class ResolveBarcodeUseCaseTest {
     }
 
     @Test
-    void returnsNullForUnknownBarcode() {
+    void returnsUnsupportedForUnknownBarcode() {
         ScanResponse result = useCase.execute(new ScanRequest("9999999999999"));
 
-        assertNull(result);
+        assertNotNull(result);
+        assertFalse(result.supported());
+        assertNull(result.gameId());
+        assertNull(result.name());
     }
 
     static class FakeBarcodeResolution implements BarcodeResolutionPort {

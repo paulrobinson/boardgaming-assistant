@@ -4,9 +4,17 @@ import com.boardgaming.assistant.application.port.out.BarcodeResolutionPort;
 import com.boardgaming.assistant.application.port.out.GameCatalogPort;
 import com.boardgaming.assistant.domain.model.Fit;
 import com.boardgaming.assistant.domain.model.Game;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,31 +24,52 @@ public class InMemoryGameCatalogAdapter implements GameCatalogPort, BarcodeResol
     private final Map<String, Game> gamesById = new LinkedHashMap<>();
     private final Map<String, Game> gamesByBarcode = new LinkedHashMap<>();
 
-    public InMemoryGameCatalogAdapter() {
-        seed(new Game("catan", "0029877030712", "Catan", 3, 4, 60, 10, 2.3,
-                Map.of(3, Fit.GOOD, 4, Fit.BEST),
-                "Trading and building on the island of Catan"));
+    private final ObjectMapper objectMapper;
 
-        seed(new Game("ticket-to-ride", "0824968717912", "Ticket to Ride", 2, 5, 45, 8, 1.8,
-                Map.of(2, Fit.OK, 3, Fit.GOOD, 4, Fit.BEST, 5, Fit.GOOD),
-                "Cross-country train adventure"));
-
-        seed(new Game("pandemic", "0681706711003", "Pandemic", 2, 4, 45, 8, 2.4,
-                Map.of(2, Fit.GOOD, 3, Fit.GOOD, 4, Fit.BEST),
-                "Cooperative disease-fighting game"));
-
-        seed(new Game("wingspan", "0850000576100", "Wingspan", 1, 5, 55, 10, 2.4,
-                Map.of(1, Fit.OK, 2, Fit.GOOD, 3, Fit.BEST, 4, Fit.GOOD, 5, Fit.OK),
-                "Competitive bird-collection engine builder"));
-
-        seed(new Game("azul", "0826956600107", "Azul", 2, 4, 35, 8, 1.8,
-                Map.of(2, Fit.BEST, 3, Fit.GOOD, 4, Fit.GOOD),
-                "Abstract tile-drafting and pattern-building"));
+    @Inject
+    public InMemoryGameCatalogAdapter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    private void seed(Game game) {
-        gamesById.put(game.gameId(), game);
-        gamesByBarcode.put(game.barcode(), game);
+    @PostConstruct
+    void loadSeedData() {
+        try (InputStream is = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("seed/games.json")) {
+            if (is == null) {
+                throw new IllegalStateException("Seed file seed/games.json not found on classpath");
+            }
+            List<JsonNode> nodes = objectMapper.readValue(is, new TypeReference<>() {});
+            for (JsonNode node : nodes) {
+                Game game = parseGame(node);
+                gamesById.put(game.gameId(), game);
+                gamesByBarcode.put(game.barcode(), game);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load seed data from seed/games.json", e);
+        }
+    }
+
+    private Game parseGame(JsonNode node) {
+        Map<Integer, Fit> playerCountSummary = new LinkedHashMap<>();
+        JsonNode pcs = node.get("playerCountSummary");
+        if (pcs != null) {
+            pcs.fields().forEachRemaining(entry ->
+                    playerCountSummary.put(
+                            Integer.parseInt(entry.getKey()),
+                            Fit.valueOf(entry.getValue().asText())));
+        }
+
+        return new Game(
+                node.get("gameId").asText(),
+                node.get("barcode").asText(),
+                node.get("name").asText(),
+                node.get("minPlayers").asInt(),
+                node.get("maxPlayers").asInt(),
+                node.get("officialPlayTimeMinutes").asInt(),
+                node.get("officialMinAge").asInt(),
+                node.get("complexityWeight").asDouble(),
+                playerCountSummary,
+                node.get("notes").asText());
     }
 
     @Override
