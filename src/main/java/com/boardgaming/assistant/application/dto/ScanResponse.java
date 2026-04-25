@@ -7,4 +7,8 @@ public record ScanResponse(
         int minPlayers,
         int maxPlayers,
         boolean supported) {
+
+    public static ScanResponse unsupported(String barcode) {
+        return new ScanResponse(null, null, 0, 0, 0, false);
+    }
 }

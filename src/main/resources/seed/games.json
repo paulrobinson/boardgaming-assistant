@@ -1,0 +1,84 @@
+[
+  {
+    "gameId": "catan",
+    "barcode": "0029877030712",
+    "name": "Catan",
+    "minPlayers": 3,
+    "maxPlayers": 4,
+    "officialPlayTimeMinutes": 60,
+    "officialMinAge": 10,
+    "complexityWeight": 2.3,
+    "playerCountSummary": {
+      "3": "GOOD",
+      "4": "BEST"
+    },
+    "notes": "Trading and building on the island of Catan"
+  },
+  {
+    "gameId": "ticket-to-ride",
+    "barcode": "0824968717912",
+    "name": "Ticket to Ride",
+    "minPlayers": 2,
+    "maxPlayers": 5,
+    "officialPlayTimeMinutes": 45,
+    "officialMinAge": 8,
+    "complexityWeight": 1.8,
+    "playerCountSummary": {
+      "2": "OK",
+      "3": "GOOD",
+      "4": "BEST",
+      "5": "GOOD"
+    },
+    "notes": "Cross-country train adventure"
+  },
+  {
+    "gameId": "pandemic",
+    "barcode": "0681706711003",
+    "name": "Pandemic",
+    "minPlayers": 2,
+    "maxPlayers": 4,
+    "officialPlayTimeMinutes": 45,
+    "officialMinAge": 8,
+    "complexityWeight": 2.4,
+    "playerCountSummary": {
+      "2": "GOOD",
+      "3": "GOOD",
+      "4": "BEST"
+    },
+    "notes": "Cooperative disease-fighting game"
+  },
+  {
+    "gameId": "wingspan",
+    "barcode": "0850000576100",
+    "name": "Wingspan",
+    "minPlayers": 1,
+    "maxPlayers": 5,
+    "officialPlayTimeMinutes": 55,
+    "officialMinAge": 10,
+    "complexityWeight": 2.4,
+    "playerCountSummary": {
+      "1": "OK",
+      "2": "GOOD",
+      "3": "BEST",
+      "4": "GOOD",
+      "5": "OK"
+    },
+    "notes": "Competitive bird-collection engine builder"
+  },
+  {
+    "gameId": "azul",
+    "barcode": "0826956600107",
+    "name": "Azul",
+    "minPlayers": 2,
+    "maxPlayers": 4,
+    "officialPlayTimeMinutes": 35,
+    "officialMinAge": 8,
+    "complexityWeight": 1.8,
+    "playerCountSummary": {
+      "2": "BEST",
+      "3": "GOOD",
+      "4": "GOOD"
+    },
+    "notes": "Abstract tile-drafting and pattern-building"
+  }
+]

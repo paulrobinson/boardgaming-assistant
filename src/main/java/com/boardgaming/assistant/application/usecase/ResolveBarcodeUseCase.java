@@ -18,19 +18,14 @@ public class ResolveBarcodeUseCase {
     }
 
     public ScanResponse execute(ScanRequest request) {
-        Game game = barcodeResolution.resolveBarcode(request.barcode())
-                .orElse(null);
-
-        if (game == null) {
-            return null;
-        }
-
-        return new ScanResponse(
-                game.gameId(),
-                game.name(),
-                game.officialPlayTimeMinutes(),
-                game.minPlayers(),
-                game.maxPlayers(),
-                true);
+        return barcodeResolution.resolveBarcode(request.barcode())
+                .map(game -> new ScanResponse(
+                        game.gameId(),
+                        game.name(),
+                        game.officialPlayTimeMinutes(),
+                        game.minPlayers(),
+                        game.maxPlayers(),
+                        true))
+                .orElseGet(() -> ScanResponse.unsupported(request.barcode()));
     }
 }
