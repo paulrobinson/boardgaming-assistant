@@ -51,6 +51,26 @@ Always use the following git identity when committing:
 - When implementing a GitHub Issue, read the full issue and prioritise what's mentioned in the comments by paul.robinson@redhat.com.
 - Run the tests before you open the Pull Request. Check back on the pull request to see if it failed. If it failed, fix it.
 
+### How to Push and Create Pull Requests
+
+The repository uses GitHub CLI (gh) with GITHUB_TOKEN for authentication. The git remote is configured with SSH, but SSH authentication is not available in this environment.
+
+**To push a branch and create a PR:**
+
+1. Temporarily change remote to HTTPS with token, push, then restore SSH:
+   ```bash
+   git remote set-url origin "https://paulrobinson:${GITHUB_TOKEN}@github.com/paulrobinson/boardgaming-assistant.git"
+   git push -u origin <branch-name>
+   git remote set-url origin git@github.com:paulrobinson/boardgaming-assistant.git
+   ```
+
+2. Create the pull request using gh CLI:
+   ```bash
+   gh pr create --title "Title" --body "Description" --base main
+   ```
+
+**Do not** try to push using SSH - it will fail with "Host key verification failed".
+
 ## Misc
 
 - Use podman not docker
