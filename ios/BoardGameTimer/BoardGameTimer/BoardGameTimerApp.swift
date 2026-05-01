@@ -1,4 +1,5 @@
 import SwiftUI
+import VisionKit
 
 @main
 struct BoardGameTimerApp: App {
@@ -13,7 +14,19 @@ struct AppCoordinator: View {
     @State private var path = NavigationPath()
 
     private let service: BoardGameService = MockBoardGameService()
-    private let scanner: BarcodeScanner = FakeBarcodeScanner()
+
+    // Use real scanner on supported devices, fake scanner otherwise
+    private let scanner: BarcodeScanner = {
+        #if targetEnvironment(simulator)
+        return FakeBarcodeScanner()
+        #else
+        if #available(iOS 16.0, *), DataScannerViewController.isSupported {
+            return VisionKitBarcodeScanner()
+        } else {
+            return FakeBarcodeScanner()
+        }
+        #endif
+    }()
 
     var body: some View {
         NavigationStack(path: $path) {
