@@ -149,7 +149,7 @@ final class FakeBarcodeScanner: BarcodeScanner {
 
 // MARK: - Errors
 
-enum ScannerError: LocalizedError {
+enum ScannerError: LocalizedError, Equatable {
     case cameraUnavailable
     case scanCancelled
     case scanInProgress
