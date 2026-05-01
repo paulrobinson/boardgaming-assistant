@@ -8,8 +8,11 @@ import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimateCachePort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
 import com.boardgaming.assistant.application.port.out.EstimateRequestPersistencePort;
+import com.boardgaming.assistant.application.port.out.EventSinkPort;
 import com.boardgaming.assistant.application.port.out.GameCatalogPort;
 import com.boardgaming.assistant.application.port.out.TimingEstimateModelPort;
+import com.boardgaming.assistant.domain.model.Event;
+import com.boardgaming.assistant.domain.model.EventType;
 import com.boardgaming.assistant.domain.model.AnalysisStyle;
 import com.boardgaming.assistant.domain.model.EstimateRequestRecord;
 import com.boardgaming.assistant.domain.model.Game;
@@ -22,11 +25,15 @@ import jakarta.inject.Inject;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ApplicationScoped
 public class CreateTimingEstimateUseCase {
 
+    private static final Logger LOG = Logger.getLogger(CreateTimingEstimateUseCase.class.getName());
     private static final Duration CACHE_TTL = Duration.ofMinutes(30);
 
     private final GameCatalogPort gameCatalog;
@@ -35,6 +42,7 @@ public class CreateTimingEstimateUseCase {
     private final EstimateRequestPersistencePort requestPersistence;
     private final EstimateCachePort cache;
     private final AnalyticsPort analytics;
+    private final EventSinkPort eventSink;
     private final EstimateCacheKeyBuilder cacheKeyBuilder = new EstimateCacheKeyBuilder();
 
     @Inject
@@ -44,13 +52,15 @@ public class CreateTimingEstimateUseCase {
             EstimatePersistencePort persistence,
             EstimateRequestPersistencePort requestPersistence,
             EstimateCachePort cache,
-            AnalyticsPort analytics) {
+            AnalyticsPort analytics,
+            EventSinkPort eventSink) {
         this.gameCatalog = gameCatalog;
         this.timingModel = timingModel;
         this.persistence = persistence;
         this.requestPersistence = requestPersistence;
         this.cache = cache;
         this.analytics = analytics;
+        this.eventSink = eventSink;
     }
 
     public EstimateResponse execute(EstimateRequest request) {
@@ -66,6 +76,10 @@ public class CreateTimingEstimateUseCase {
 
         var cached = cache.get(cacheKey);
         if (cached.isPresent()) {
+            publishSafely(Event.of(EventType.ESTIMATE_CACHE_HIT, Map.of(
+                    "estimateId", cached.get().estimateId(),
+                    "gameId", cached.get().gameId(),
+                    "cacheKey", cacheKey)));
             return toResponse(cached.get());
         }
 
@@ -90,6 +104,13 @@ public class CreateTimingEstimateUseCase {
         persistence.save(estimate);
         cache.put(cacheKey, estimate, CACHE_TTL);
         analytics.recordEstimateCreated(estimate);
+        publishSafely(Event.of(EventType.ESTIMATE_CREATED, Map.of(
+                "estimateId", estimate.estimateId(),
+                "gameId", estimate.gameId(),
+                "teachMinutes", String.valueOf(estimate.teachMinutes()),
+                "playMinutes", String.valueOf(estimate.playMinutes()),
+                "totalMinutes", String.valueOf(estimate.totalMinutes()),
+                "confidence", estimate.confidence().name().toLowerCase())));
 
         return toResponse(estimate);
     }
@@ -107,6 +128,14 @@ public class CreateTimingEstimateUseCase {
 
     private String buildCacheKey(EstimateRequest request) {
         return cacheKeyBuilder.build(request.gameId(), request.groupProfile());
+    }
+
+    private void publishSafely(Event event) {
+        try {
+            eventSink.publish(event);
+        } catch (Exception e) {
+            LOG.log(Level.WARNING, "Failed to publish event: " + event.type(), e);
+        }
     }
 
     private EstimateResponse toResponse(SessionTimingEstimate est) {

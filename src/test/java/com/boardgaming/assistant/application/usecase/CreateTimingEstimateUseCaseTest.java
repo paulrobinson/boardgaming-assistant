@@ -7,9 +7,12 @@ import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimateCachePort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
 import com.boardgaming.assistant.application.port.out.EstimateRequestPersistencePort;
+import com.boardgaming.assistant.application.port.out.EventSinkPort;
 import com.boardgaming.assistant.application.port.out.GameCatalogPort;
 import com.boardgaming.assistant.application.port.out.TimingEstimateModelPort;
 import com.boardgaming.assistant.domain.model.EstimateRequestRecord;
+import com.boardgaming.assistant.domain.model.Event;
+import com.boardgaming.assistant.domain.model.EventType;
 import com.boardgaming.assistant.domain.model.Feedback;
 import com.boardgaming.assistant.domain.model.Fit;
 import com.boardgaming.assistant.domain.model.Game;
@@ -38,6 +41,7 @@ class CreateTimingEstimateUseCaseTest {
     private FakeRequestPersistence fakeRequestPersistence;
     private FakeCache fakeCache;
     private FakeAnalytics fakeAnalytics;
+    private FakeEventSink fakeEventSink;
 
     private static final Game CATAN = new Game(
             "catan", "0029877030712", "Catan", 3, 4, 60, 10, 2.3,
@@ -52,9 +56,11 @@ class CreateTimingEstimateUseCaseTest {
         fakeRequestPersistence = new FakeRequestPersistence();
         fakeCache = new FakeCache();
         fakeAnalytics = new FakeAnalytics();
+        fakeEventSink = new FakeEventSink();
 
         useCase = new CreateTimingEstimateUseCase(
-                fakeCatalog, fakeModel, fakePersistence, fakeRequestPersistence, fakeCache, fakeAnalytics);
+                fakeCatalog, fakeModel, fakePersistence, fakeRequestPersistence,
+                fakeCache, fakeAnalytics, fakeEventSink);
     }
 
     @Test
@@ -172,6 +178,37 @@ class CreateTimingEstimateUseCaseTest {
     }
 
     @Test
+    void emitsEstimateCreatedEvent() {
+        var request = new EstimateRequest("catan",
+                new GroupProfileDto(4, "mixed", "average", "moderate", false, null));
+
+        useCase.execute(request);
+
+        List<Event> created = fakeEventSink.eventsOfType(EventType.ESTIMATE_CREATED);
+        assertEquals(1, created.size());
+        assertEquals("catan", created.get(0).payload().get("gameId"));
+        assertNotNull(created.get(0).payload().get("estimateId"));
+        assertNotNull(created.get(0).payload().get("teachMinutes"));
+        assertNotNull(created.get(0).payload().get("playMinutes"));
+        assertNotNull(created.get(0).payload().get("totalMinutes"));
+        assertNotNull(created.get(0).payload().get("confidence"));
+    }
+
+    @Test
+    void emitsCacheHitEventOnRepeatRequest() {
+        var request = new EstimateRequest("catan",
+                new GroupProfileDto(4, "mixed", "average", "moderate", false, null));
+
+        useCase.execute(request);
+        useCase.execute(request);
+
+        List<Event> cacheHits = fakeEventSink.eventsOfType(EventType.ESTIMATE_CACHE_HIT);
+        assertEquals(1, cacheHits.size());
+        assertEquals("catan", cacheHits.get(0).payload().get("gameId"));
+        assertNotNull(cacheHits.get(0).payload().get("cacheKey"));
+    }
+
+    @Test
     void confidenceIsLowercaseString() {
         var request = new EstimateRequest("catan",
                 new GroupProfileDto(4, "experienced", "average", "low", false, null));
@@ -246,6 +283,19 @@ class CreateTimingEstimateUseCaseTest {
         @Override
         public Optional<EstimateRequestRecord> findRequestById(String requestId) {
             return Optional.ofNullable(store.get(requestId));
+        }
+    }
+
+    static class FakeEventSink implements EventSinkPort {
+        final List<Event> events = new ArrayList<>();
+
+        @Override
+        public void publish(Event event) {
+            events.add(event);
+        }
+
+        List<Event> eventsOfType(EventType type) {
+            return events.stream().filter(e -> e.type() == type).toList();
         }
     }
 
