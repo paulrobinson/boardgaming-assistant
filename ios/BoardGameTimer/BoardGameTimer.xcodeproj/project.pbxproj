@@ -34,6 +34,8 @@
 		FB90A56E2FA50CFE00AFDC95 /* BoardGameAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A56B2FA50CFE00AFDC95 /* BoardGameAPIClient.swift */; };
 		FB90A56F2FA50CFE00AFDC95 /* HTTPTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */; };
 		FB90A5712FA50D2100AFDC95 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A5702FA50D2100AFDC95 /* NetworkTests.swift */; };
+		FBCD594F2FA5139A00A5296D /* PlayerCountFitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBCD594C2FA5139A00A5296D /* PlayerCountFitView.swift */; };
+		FBCD59502FA5139A00A5296D /* TimeEstimateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBCD594D2FA5139A00A5296D /* TimeEstimateCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +78,8 @@
 		FB90A56B2FA50CFE00AFDC95 /* BoardGameAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardGameAPIClient.swift; sourceTree = "<group>"; };
 		FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTransport.swift; sourceTree = "<group>"; };
 		FB90A5702FA50D2100AFDC95 /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
+		FBCD594C2FA5139A00A5296D /* PlayerCountFitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCountFitView.swift; sourceTree = "<group>"; };
+		FBCD594D2FA5139A00A5296D /* TimeEstimateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeEstimateCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +184,7 @@
 		A0000001000000000000014A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				FBCD594E2FA5139A00A5296D /* Components */,
 				A0000001000000000000003F /* EstimateResultView.swift */,
 				A0000001000000000000004B /* FeedbackView.swift */,
 				A0000001000000000000004D /* GameConfirmationView.swift */,
@@ -209,6 +214,15 @@
 				FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		FBCD594E2FA5139A00A5296D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				FBCD594C2FA5139A00A5296D /* PlayerCountFitView.swift */,
+				FBCD594D2FA5139A00A5296D /* TimeEstimateCard.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -329,6 +343,8 @@
 				A0000001000000000000000E /* EstimateModels.swift in Sources */,
 				A0000001000000000000001A /* FeedbackModels.swift in Sources */,
 				A0000001000000000000001C /* GroupProfile.swift in Sources */,
+				FBCD594F2FA5139A00A5296D /* PlayerCountFitView.swift in Sources */,
+				FBCD59502FA5139A00A5296D /* TimeEstimateCard.swift in Sources */,
 				A0000001000000000000001E /* ScanModels.swift in Sources */,
 				A0000001000000000000002A /* BarcodeScanner.swift in Sources */,
 				A0000001000000000000002C /* BoardGameService.swift in Sources */,
