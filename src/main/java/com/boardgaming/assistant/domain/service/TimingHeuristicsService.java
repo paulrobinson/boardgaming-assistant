@@ -8,6 +8,7 @@ import com.boardgaming.assistant.domain.model.GroupProfile;
 import com.boardgaming.assistant.domain.model.PlayerCountFit;
 import com.boardgaming.assistant.domain.model.SessionTimingEstimate;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class TimingHeuristicsService {
                 confidence,
                 playerCountFit,
                 explanation,
-                riskNotes);
+                riskNotes,
+                Instant.now());
     }
 
     int calculateTeachMinutes(Game game, GroupProfile profile) {

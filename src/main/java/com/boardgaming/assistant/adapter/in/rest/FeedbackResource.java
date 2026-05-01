@@ -28,6 +28,18 @@ public class FeedbackResource {
                     .build();
         }
 
+        if (request.actualTeachMinutes() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse("actualTeachMinutes must be greater than zero"))
+                    .build();
+        }
+
+        if (request.actualPlayMinutes() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse("actualPlayMinutes must be greater than zero"))
+                    .build();
+        }
+
         FeedbackResponse result = submitFeedbackUseCase.execute(request);
         if (result == null) {
             return Response.status(Response.Status.NOT_FOUND)

@@ -6,8 +6,10 @@ import com.boardgaming.assistant.application.dto.GroupProfileDto;
 import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimateCachePort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
+import com.boardgaming.assistant.application.port.out.EstimateRequestPersistencePort;
 import com.boardgaming.assistant.application.port.out.GameCatalogPort;
 import com.boardgaming.assistant.application.port.out.TimingEstimateModelPort;
+import com.boardgaming.assistant.domain.model.EstimateRequestRecord;
 import com.boardgaming.assistant.domain.model.Feedback;
 import com.boardgaming.assistant.domain.model.Fit;
 import com.boardgaming.assistant.domain.model.Game;
@@ -33,6 +35,7 @@ class CreateTimingEstimateUseCaseTest {
     private CreateTimingEstimateUseCase useCase;
     private FakeGameCatalog fakeCatalog;
     private FakePersistence fakePersistence;
+    private FakeRequestPersistence fakeRequestPersistence;
     private FakeCache fakeCache;
     private FakeAnalytics fakeAnalytics;
 
@@ -46,11 +49,12 @@ class CreateTimingEstimateUseCaseTest {
         fakeCatalog.add(CATAN);
         var fakeModel = new FakeTimingModel();
         fakePersistence = new FakePersistence();
+        fakeRequestPersistence = new FakeRequestPersistence();
         fakeCache = new FakeCache();
         fakeAnalytics = new FakeAnalytics();
 
         useCase = new CreateTimingEstimateUseCase(
-                fakeCatalog, fakeModel, fakePersistence, fakeCache, fakeAnalytics);
+                fakeCatalog, fakeModel, fakePersistence, fakeRequestPersistence, fakeCache, fakeAnalytics);
     }
 
     @Test
@@ -95,6 +99,32 @@ class CreateTimingEstimateUseCaseTest {
         EstimateResponse result = useCase.execute(request);
 
         assertTrue(fakePersistence.findById(result.estimateId()).isPresent());
+    }
+
+    @Test
+    void persistsEstimateRequest() {
+        var request = new EstimateRequest("catan",
+                new GroupProfileDto(4, "mixed", "average", "moderate", false, null));
+
+        EstimateResponse result = useCase.execute(request);
+
+        assertEquals(1, fakeRequestPersistence.store.size());
+        EstimateRequestRecord saved = fakeRequestPersistence.store.values().iterator().next();
+        assertEquals(result.estimateId(), saved.estimateId());
+        assertEquals("catan", saved.gameId());
+        assertEquals(4, saved.playerCount());
+        assertNotNull(saved.createdAt());
+    }
+
+    @Test
+    void estimateHasTimestamp() {
+        var request = new EstimateRequest("catan",
+                new GroupProfileDto(4, "mixed", "average", "moderate", false, null));
+
+        EstimateResponse result = useCase.execute(request);
+
+        SessionTimingEstimate saved = fakePersistence.findById(result.estimateId()).orElseThrow();
+        assertNotNull(saved.createdAt());
     }
 
     @Test
@@ -202,6 +232,20 @@ class CreateTimingEstimateUseCaseTest {
         @Override
         public void put(String key, SessionTimingEstimate estimate) {
             store.put(key, estimate);
+        }
+    }
+
+    static class FakeRequestPersistence implements EstimateRequestPersistencePort {
+        final Map<String, EstimateRequestRecord> store = new ConcurrentHashMap<>();
+
+        @Override
+        public void save(EstimateRequestRecord request) {
+            store.put(request.requestId(), request);
+        }
+
+        @Override
+        public Optional<EstimateRequestRecord> findRequestById(String requestId) {
+            return Optional.ofNullable(store.get(requestId));
         }
     }
 

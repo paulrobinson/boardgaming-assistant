@@ -1,5 +1,6 @@
 package com.boardgaming.assistant.domain.model;
 
+import java.time.Instant;
 import java.util.List;
 
 public record SessionTimingEstimate(
@@ -11,5 +12,6 @@ public record SessionTimingEstimate(
         Confidence confidence,
         List<PlayerCountFit> playerCountFit,
         String explanation,
-        List<String> riskNotes) {
+        List<String> riskNotes,
+        Instant createdAt) {
 }

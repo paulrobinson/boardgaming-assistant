@@ -6,9 +6,11 @@ import com.boardgaming.assistant.application.dto.PlayerCountFitDto;
 import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimateCachePort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
+import com.boardgaming.assistant.application.port.out.EstimateRequestPersistencePort;
 import com.boardgaming.assistant.application.port.out.GameCatalogPort;
 import com.boardgaming.assistant.application.port.out.TimingEstimateModelPort;
 import com.boardgaming.assistant.domain.model.AnalysisStyle;
+import com.boardgaming.assistant.domain.model.EstimateRequestRecord;
 import com.boardgaming.assistant.domain.model.Game;
 import com.boardgaming.assistant.domain.model.GroupFamiliarity;
 import com.boardgaming.assistant.domain.model.GroupProfile;
@@ -17,6 +19,7 @@ import com.boardgaming.assistant.domain.model.TurnPace;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -25,6 +28,7 @@ public class CreateTimingEstimateUseCase {
     private final GameCatalogPort gameCatalog;
     private final TimingEstimateModelPort timingModel;
     private final EstimatePersistencePort persistence;
+    private final EstimateRequestPersistencePort requestPersistence;
     private final EstimateCachePort cache;
     private final AnalyticsPort analytics;
 
@@ -33,11 +37,13 @@ public class CreateTimingEstimateUseCase {
             GameCatalogPort gameCatalog,
             TimingEstimateModelPort timingModel,
             EstimatePersistencePort persistence,
+            EstimateRequestPersistencePort requestPersistence,
             EstimateCachePort cache,
             AnalyticsPort analytics) {
         this.gameCatalog = gameCatalog;
         this.timingModel = timingModel;
         this.persistence = persistence;
+        this.requestPersistence = requestPersistence;
         this.cache = cache;
         this.analytics = analytics;
     }
@@ -59,6 +65,21 @@ public class CreateTimingEstimateUseCase {
         }
 
         String estimateId = "est_" + UUID.randomUUID().toString().substring(0, 8);
+        String requestId = "req_" + UUID.randomUUID().toString().substring(0, 8);
+
+        EstimateRequestRecord requestRecord = new EstimateRequestRecord(
+                requestId,
+                estimateId,
+                request.gameId(),
+                profile.playerCount(),
+                profile.groupFamiliarity(),
+                profile.turnPace(),
+                profile.analysisStyle(),
+                profile.childrenIncluded(),
+                profile.notes(),
+                Instant.now());
+        requestPersistence.save(requestRecord);
+
         SessionTimingEstimate estimate = timingModel.generate(estimateId, game, profile);
 
         persistence.save(estimate);
