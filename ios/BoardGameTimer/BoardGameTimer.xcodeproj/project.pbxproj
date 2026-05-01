@@ -31,6 +31,9 @@
 		FB3A77832FA50A290017EDB7 /* ScanViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */; };
 		FB3A77842FA50A290017EDB7 /* FeedbackViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */; };
 		FB3A77852FA50A290017EDB7 /* EstimateViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */; };
+		FB90A56E2FA50CFE00AFDC95 /* BoardGameAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A56B2FA50CFE00AFDC95 /* BoardGameAPIClient.swift */; };
+		FB90A56F2FA50CFE00AFDC95 /* HTTPTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */; };
+		FB90A5712FA50D2100AFDC95 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90A5702FA50D2100AFDC95 /* NetworkTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +73,9 @@
 		FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViewModelTests.swift; sourceTree = "<group>"; };
 		FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModelTests.swift; sourceTree = "<group>"; };
 		FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModelTests.swift; sourceTree = "<group>"; };
+		FB90A56B2FA50CFE00AFDC95 /* BoardGameAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardGameAPIClient.swift; sourceTree = "<group>"; };
+		FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTransport.swift; sourceTree = "<group>"; };
+		FB90A5702FA50D2100AFDC95 /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +118,7 @@
 		A0000001000000000000009D /* BoardGameTimer */ = {
 			isa = PBXGroup;
 			children = (
+				FB90A56D2FA50CFE00AFDC95 /* Network */,
 				A0000001000000000000000B /* BoardGameTimerApp.swift */,
 				A0000001000000000000010A /* Models */,
 				A0000001000000000000011A /* Scanner */,
@@ -186,12 +193,22 @@
 		FB3A77812FA50A290017EDB7 /* BoardGameTimerTests */ = {
 			isa = PBXGroup;
 			children = (
+				FB90A5702FA50D2100AFDC95 /* NetworkTests.swift */,
 				FB3A777D2FA50A290017EDB7 /* BarcodeScannerTests.swift */,
 				FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */,
 				FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */,
 				FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */,
 			);
 			path = BoardGameTimerTests;
+			sourceTree = "<group>";
+		};
+		FB90A56D2FA50CFE00AFDC95 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				FB90A56B2FA50CFE00AFDC95 /* BoardGameAPIClient.swift */,
+				FB90A56C2FA50CFE00AFDC95 /* HTTPTransport.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -294,6 +311,7 @@
 			files = (
 				A0000001000000000000006A /* EstimateViewModelTests.swift in Sources */,
 				FB3A77822FA50A290017EDB7 /* BarcodeScannerTests.swift in Sources */,
+				FB90A5712FA50D2100AFDC95 /* NetworkTests.swift in Sources */,
 				FB3A77832FA50A290017EDB7 /* ScanViewModelTests.swift in Sources */,
 				FB3A77842FA50A290017EDB7 /* FeedbackViewModelTests.swift in Sources */,
 				FB3A77852FA50A290017EDB7 /* EstimateViewModelTests.swift in Sources */,
@@ -317,6 +335,8 @@
 				A0000001000000000000002E /* EstimateViewModel.swift in Sources */,
 				A0000001000000000000003A /* FeedbackViewModel.swift in Sources */,
 				A0000001000000000000003C /* ScanViewModel.swift in Sources */,
+				FB90A56E2FA50CFE00AFDC95 /* BoardGameAPIClient.swift in Sources */,
+				FB90A56F2FA50CFE00AFDC95 /* HTTPTransport.swift in Sources */,
 				A0000001000000000000003E /* EstimateResultView.swift in Sources */,
 				A0000001000000000000004A /* FeedbackView.swift in Sources */,
 				A0000001000000000000004C /* GameConfirmationView.swift in Sources */,

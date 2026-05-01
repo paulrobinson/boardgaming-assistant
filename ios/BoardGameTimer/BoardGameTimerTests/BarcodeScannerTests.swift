@@ -1,4 +1,5 @@
 import XCTest
+import VisionKit
 @testable import BoardGameTimer
 
 @MainActor
@@ -71,6 +72,10 @@ final class BarcodeScannerTests: XCTestCase {
 
     @available(iOS 16.0, *)
     func testVisionKitScannerAcceptsBarcodeResult() async throws {
+        guard DataScannerViewController.isSupported else {
+            throw XCTSkip("DataScannerViewController not supported on this device")
+        }
+
         let scanner = VisionKitBarcodeScanner()
 
         Task {
@@ -83,7 +88,11 @@ final class BarcodeScannerTests: XCTestCase {
     }
 
     @available(iOS 16.0, *)
-    func testVisionKitScannerHandlesCancellation() async {
+    func testVisionKitScannerHandlesCancellation() async throws {
+        guard DataScannerViewController.isSupported else {
+            throw XCTSkip("DataScannerViewController not supported on this device")
+        }
+
         let scanner = VisionKitBarcodeScanner()
 
         Task {
@@ -102,7 +111,11 @@ final class BarcodeScannerTests: XCTestCase {
     }
 
     @available(iOS 16.0, *)
-    func testVisionKitScannerHandlesFailure() async {
+    func testVisionKitScannerHandlesFailure() async throws {
+        guard DataScannerViewController.isSupported else {
+            throw XCTSkip("DataScannerViewController not supported on this device")
+        }
+
         let scanner = VisionKitBarcodeScanner()
 
         Task {
@@ -121,7 +134,11 @@ final class BarcodeScannerTests: XCTestCase {
     }
 
     @available(iOS 16.0, *)
-    func testVisionKitScannerPreventsMultipleSimultaneousScans() async {
+    func testVisionKitScannerPreventsMultipleSimultaneousScans() async throws {
+        guard DataScannerViewController.isSupported else {
+            throw XCTSkip("DataScannerViewController not supported on this device")
+        }
+
         let scanner = VisionKitBarcodeScanner()
 
         // Start first scan but don't complete it
