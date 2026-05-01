@@ -27,6 +27,10 @@
 		A0000001000000000000006A /* EstimateViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000006B /* EstimateViewModelTests.swift */; };
 		A0000001000000000000006C /* FeedbackViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000006D /* FeedbackViewModelTests.swift */; };
 		A0000001000000000000006E /* ScanViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000006F /* ScanViewModelTests.swift */; };
+		FB3A77822FA50A290017EDB7 /* BarcodeScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A777D2FA50A290017EDB7 /* BarcodeScannerTests.swift */; };
+		FB3A77832FA50A290017EDB7 /* ScanViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */; };
+		FB3A77842FA50A290017EDB7 /* FeedbackViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */; };
+		FB3A77852FA50A290017EDB7 /* EstimateViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,7 +44,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A0000001000000000000008B /* BoardGameTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BoardGameTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0000001000000000000000B /* BoardGameTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardGameTimerApp.swift; sourceTree = "<group>"; };
 		A0000001000000000000000D /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		A0000001000000000000000F /* EstimateModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateModels.swift; sourceTree = "<group>"; };
@@ -58,21 +61,26 @@
 		A0000001000000000000004F /* GroupProfileFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupProfileFormView.swift; sourceTree = "<group>"; };
 		A0000001000000000000005B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A0000001000000000000005D /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
-		A0000001000000000000007B /* BoardGameTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BoardGameTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0000001000000000000006B /* EstimateViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViewModelTests.swift; sourceTree = "<group>"; };
 		A0000001000000000000006D /* FeedbackViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModelTests.swift; sourceTree = "<group>"; };
 		A0000001000000000000006F /* ScanViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModelTests.swift; sourceTree = "<group>"; };
+		A0000001000000000000007B /* BoardGameTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BoardGameTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0000001000000000000008B /* BoardGameTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BoardGameTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB3A777D2FA50A290017EDB7 /* BarcodeScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerTests.swift; sourceTree = "<group>"; };
+		FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViewModelTests.swift; sourceTree = "<group>"; };
+		FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModelTests.swift; sourceTree = "<group>"; };
+		FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A0000001000000000000008C /* Frameworks */ = {
+		A0000001000000000000007C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A0000001000000000000007C /* Frameworks */ = {
+		A0000001000000000000008C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -82,9 +90,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A0000001000000000000009B /* BoardGameTimer */ = {
+		A0000001000000000000009B = {
 			isa = PBXGroup;
 			children = (
+				FB3A77812FA50A290017EDB7 /* BoardGameTimerTests */,
 				A0000001000000000000009C /* Products */,
 				A0000001000000000000009D /* BoardGameTimer */,
 				A0000001000000000000009E /* BoardGameTimerTests */,
@@ -111,6 +120,16 @@
 				A0000001000000000000014A /* Views */,
 			);
 			path = BoardGameTimer;
+			sourceTree = "<group>";
+		};
+		A0000001000000000000009E /* BoardGameTimerTests */ = {
+			isa = PBXGroup;
+			children = (
+				A0000001000000000000006B /* EstimateViewModelTests.swift */,
+				A0000001000000000000006D /* FeedbackViewModelTests.swift */,
+				A0000001000000000000006F /* ScanViewModelTests.swift */,
+			);
+			path = BoardGameTimerTests;
 			sourceTree = "<group>";
 		};
 		A0000001000000000000010A /* Models */ = {
@@ -164,12 +183,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		A0000001000000000000009E /* BoardGameTimerTests */ = {
+		FB3A77812FA50A290017EDB7 /* BoardGameTimerTests */ = {
 			isa = PBXGroup;
 			children = (
-				A0000001000000000000006B /* EstimateViewModelTests.swift */,
-				A0000001000000000000006D /* FeedbackViewModelTests.swift */,
-				A0000001000000000000006F /* ScanViewModelTests.swift */,
+				FB3A777D2FA50A290017EDB7 /* BarcodeScannerTests.swift */,
+				FB3A777E2FA50A290017EDB7 /* EstimateViewModelTests.swift */,
+				FB3A777F2FA50A290017EDB7 /* FeedbackViewModelTests.swift */,
+				FB3A77802FA50A290017EDB7 /* ScanViewModelTests.swift */,
 			);
 			path = BoardGameTimerTests;
 			sourceTree = "<group>";
@@ -177,23 +197,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A0000001000000000000008A /* BoardGameTimer */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A0000001000000000000015A /* Build configuration list for PBXNativeTarget "BoardGameTimer" */;
-			buildPhases = (
-				A0000001000000000000008D /* Sources */,
-				A0000001000000000000008C /* Frameworks */,
-				A0000001000000000000008E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BoardGameTimer;
-			productName = BoardGameTimer;
-			productReference = A0000001000000000000008B /* BoardGameTimer.app */;
-			productType = "com.apple.product-type.application";
-		};
 		A0000001000000000000007D /* BoardGameTimerTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0000001000000000000016A /* Build configuration list for PBXNativeTarget "BoardGameTimerTests" */;
@@ -212,6 +215,23 @@
 			productReference = A0000001000000000000007B /* BoardGameTimerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A0000001000000000000008A /* BoardGameTimer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0000001000000000000015A /* Build configuration list for PBXNativeTarget "BoardGameTimer" */;
+			buildPhases = (
+				A0000001000000000000008D /* Sources */,
+				A0000001000000000000008C /* Frameworks */,
+				A0000001000000000000008E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BoardGameTimer;
+			productName = BoardGameTimer;
+			productReference = A0000001000000000000008B /* BoardGameTimer.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -222,12 +242,12 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					A0000001000000000000008A = {
-						CreatedOnToolsVersion = 15.0;
-					};
 					A0000001000000000000007D = {
 						CreatedOnToolsVersion = 15.0;
 						TestTargetID = A0000001000000000000008A;
+					};
+					A0000001000000000000008A = {
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
@@ -239,7 +259,7 @@
 				en,
 				Base,
 			);
-			mainGroup = A0000001000000000000009B /* BoardGameTimer */;
+			mainGroup = A0000001000000000000009B;
 			productRefGroup = A0000001000000000000009C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -251,14 +271,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A0000001000000000000008E /* Resources */ = {
+		A0000001000000000000007F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A0000001000000000000007F /* Resources */ = {
+		A0000001000000000000008E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -268,6 +288,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A0000001000000000000007E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0000001000000000000006A /* EstimateViewModelTests.swift in Sources */,
+				FB3A77822FA50A290017EDB7 /* BarcodeScannerTests.swift in Sources */,
+				FB3A77832FA50A290017EDB7 /* ScanViewModelTests.swift in Sources */,
+				FB3A77842FA50A290017EDB7 /* FeedbackViewModelTests.swift in Sources */,
+				FB3A77852FA50A290017EDB7 /* EstimateViewModelTests.swift in Sources */,
+				A0000001000000000000006C /* FeedbackViewModelTests.swift in Sources */,
+				A0000001000000000000006E /* ScanViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0000001000000000000008D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -289,16 +323,6 @@
 				A0000001000000000000004E /* GroupProfileFormView.swift in Sources */,
 				A0000001000000000000005A /* HomeView.swift in Sources */,
 				A0000001000000000000005C /* ScanView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A0000001000000000000007E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A0000001000000000000006A /* EstimateViewModelTests.swift in Sources */,
-				A0000001000000000000006C /* FeedbackViewModelTests.swift in Sources */,
-				A0000001000000000000006E /* ScanViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

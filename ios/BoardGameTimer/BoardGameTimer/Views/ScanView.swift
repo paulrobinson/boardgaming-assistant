@@ -1,20 +1,28 @@
 import SwiftUI
+import VisionKit
 
 struct ScanView: View {
     @ObservedObject var viewModel: ScanViewModel
     @Binding var path: NavigationPath
 
     var body: some View {
-        VStack(spacing: 24) {
+        ZStack {
             switch viewModel.state {
             case .idle:
                 scanPrompt
 
             case .scanning:
-                ProgressView("Scanning barcode...")
+                if #available(iOS 16.0, *),
+                   let visionScanner = viewModel.visionKitScanner {
+                    cameraView(scanner: visionScanner)
+                } else {
+                    ProgressView("Scanning barcode...")
+                }
 
             case .resolving:
+                Color.black.ignoresSafeArea()
                 ProgressView("Looking up game...")
+                    .tint(.white)
 
             case .resolved(let scan):
                 resolvedView(scan)
@@ -26,11 +34,37 @@ struct ScanView: View {
                 errorView(message)
             }
         }
-        .padding()
         .navigationTitle("Scan")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             if viewModel.state == .idle {
                 await viewModel.startScan()
+            }
+        }
+    }
+
+    @available(iOS 16.0, *)
+    private func cameraView(scanner: VisionKitBarcodeScanner) -> some View {
+        ZStack {
+            BarcodeScannerView(scanner: scanner)
+                .ignoresSafeArea()
+
+            VStack {
+                Spacer()
+
+                VStack(spacing: 12) {
+                    Text("Point camera at barcode")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+
+                    Text("UPC, EAN, or Code 128 barcodes")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+                .padding()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.bottom, 48)
             }
         }
     }
