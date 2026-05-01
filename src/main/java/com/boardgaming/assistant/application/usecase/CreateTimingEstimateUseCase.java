@@ -1,5 +1,6 @@
 package com.boardgaming.assistant.application.usecase;
 
+import com.boardgaming.assistant.adapter.out.cache.EstimateCacheKeyBuilder;
 import com.boardgaming.assistant.application.dto.EstimateRequest;
 import com.boardgaming.assistant.application.dto.EstimateResponse;
 import com.boardgaming.assistant.application.dto.PlayerCountFitDto;
@@ -19,11 +20,14 @@ import com.boardgaming.assistant.domain.model.TurnPace;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
 @ApplicationScoped
 public class CreateTimingEstimateUseCase {
+
+    private static final Duration CACHE_TTL = Duration.ofMinutes(30);
 
     private final GameCatalogPort gameCatalog;
     private final TimingEstimateModelPort timingModel;
@@ -31,6 +35,7 @@ public class CreateTimingEstimateUseCase {
     private final EstimateRequestPersistencePort requestPersistence;
     private final EstimateCachePort cache;
     private final AnalyticsPort analytics;
+    private final EstimateCacheKeyBuilder cacheKeyBuilder = new EstimateCacheKeyBuilder();
 
     @Inject
     public CreateTimingEstimateUseCase(
@@ -83,7 +88,7 @@ public class CreateTimingEstimateUseCase {
         SessionTimingEstimate estimate = timingModel.generate(estimateId, game, profile);
 
         persistence.save(estimate);
-        cache.put(cacheKey, estimate);
+        cache.put(cacheKey, estimate, CACHE_TTL);
         analytics.recordEstimateCreated(estimate);
 
         return toResponse(estimate);
@@ -101,13 +106,7 @@ public class CreateTimingEstimateUseCase {
     }
 
     private String buildCacheKey(EstimateRequest request) {
-        var gp = request.groupProfile();
-        return request.gameId()
-                + ":" + gp.playerCount()
-                + ":" + gp.groupFamiliarity()
-                + ":" + gp.turnPace()
-                + ":" + gp.analysisStyle()
-                + ":" + gp.childrenIncluded();
+        return cacheKeyBuilder.build(request.gameId(), request.groupProfile());
     }
 
     private EstimateResponse toResponse(SessionTimingEstimate est) {

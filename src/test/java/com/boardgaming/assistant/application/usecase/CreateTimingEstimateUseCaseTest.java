@@ -230,7 +230,7 @@ class CreateTimingEstimateUseCaseTest {
         }
 
         @Override
-        public void put(String key, SessionTimingEstimate estimate) {
+        public void put(String key, SessionTimingEstimate estimate, java.time.Duration ttl) {
             store.put(key, estimate);
         }
     }
