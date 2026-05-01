@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,8 @@ public class TimingEstimateResponseParser {
                     confidence,
                     playerCountFit,
                     explanation,
-                    riskNotes));
+                    riskNotes,
+                    Instant.now()));
 
         } catch (JsonProcessingException | IllegalArgumentException e) {
             return Optional.empty();

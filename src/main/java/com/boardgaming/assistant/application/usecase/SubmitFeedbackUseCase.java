@@ -9,6 +9,7 @@ import com.boardgaming.assistant.domain.model.Feedback;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -29,6 +30,13 @@ public class SubmitFeedbackUseCase {
     }
 
     public FeedbackResponse execute(FeedbackRequest request) {
+        if (request.actualTeachMinutes() <= 0) {
+            throw new IllegalArgumentException("actualTeachMinutes must be greater than zero");
+        }
+        if (request.actualPlayMinutes() <= 0) {
+            throw new IllegalArgumentException("actualPlayMinutes must be greater than zero");
+        }
+
         var estimate = estimatePersistence.findById(request.estimateId());
         if (estimate.isEmpty()) {
             return null;
@@ -40,7 +48,8 @@ public class SubmitFeedbackUseCase {
                 request.estimateId(),
                 request.actualTeachMinutes(),
                 request.actualPlayMinutes(),
-                request.notes());
+                request.notes(),
+                Instant.now());
 
         feedbackPersistence.save(feedback);
         analytics.recordFeedbackReceived(feedback);
