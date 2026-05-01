@@ -16,6 +16,11 @@ final class ScanViewModel: ObservableObject {
     private let scanner: BarcodeScanner
     private let service: BoardGameService
 
+    // Expose VisionKit scanner for UI integration
+    var visionKitScanner: VisionKitBarcodeScanner? {
+        scanner as? VisionKitBarcodeScanner
+    }
+
     init(scanner: BarcodeScanner, service: BoardGameService) {
         self.scanner = scanner
         self.service = service
@@ -25,7 +30,17 @@ final class ScanViewModel: ObservableObject {
         state = .scanning
         do {
             let barcode = try await scanner.scan()
-            state = .resolving
+            await resolveBarcode(barcode)
+        } catch is CancellationError {
+            state = .error("Scan was cancelled")
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
+
+    func resolveBarcode(_ barcode: String) async {
+        state = .resolving
+        do {
             let response = try await service.resolveBarcode(barcode)
             if response.supported {
                 state = .resolved(response)
