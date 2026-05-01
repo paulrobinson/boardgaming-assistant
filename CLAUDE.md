@@ -46,6 +46,11 @@ Always use the following git identity when committing:
 - Always check for upstream changes before branching
 - Always propose new changes with a Pull Request
 - Never push directly to main
+- Stay on the feature branch after opening the pull request. I will review the code locally
 - Add tests for all new features/changes
-- When implementing a GitHub Issue, read the full issue and prioritise what's mentioned in the comments by Paul Robinson.
+- When implementing a GitHub Issue, read the full issue and prioritise what's mentioned in the comments by paul.robinson@redhat.com.
 - Run the tests before you open the Pull Request. Check back on the pull request to see if it failed. If it failed, fix it.
+
+## Misc
+
+- Use podman not docker
