@@ -4,8 +4,11 @@ import com.boardgaming.assistant.application.dto.FeedbackRequest;
 import com.boardgaming.assistant.application.dto.FeedbackResponse;
 import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
+import com.boardgaming.assistant.application.port.out.EventSinkPort;
 import com.boardgaming.assistant.application.port.out.FeedbackPersistencePort;
 import com.boardgaming.assistant.domain.model.Confidence;
+import com.boardgaming.assistant.domain.model.Event;
+import com.boardgaming.assistant.domain.model.EventType;
 import com.boardgaming.assistant.domain.model.Feedback;
 import com.boardgaming.assistant.domain.model.PlayerCountFit;
 import com.boardgaming.assistant.domain.model.Fit;
@@ -13,6 +16,7 @@ import com.boardgaming.assistant.domain.model.SessionTimingEstimate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SubmitFeedbackUseCaseTest {
@@ -30,11 +35,13 @@ class SubmitFeedbackUseCaseTest {
     private FakeEstimatePersistence estimatePersistence;
     private FakeFeedbackPersistence feedbackPersistence;
     private FakeAnalytics fakeAnalytics;
+    private FakeEventSink fakeEventSink;
 
     private static final SessionTimingEstimate EXISTING_ESTIMATE = new SessionTimingEstimate(
             "est_abc123", "catan", 20, 70, 90, Confidence.MEDIUM,
             List.of(new PlayerCountFit(3, Fit.GOOD), new PlayerCountFit(4, Fit.BEST)),
-            "Catan plays well at 4 players.", List.of("First play may run longer"));
+            "Catan plays well at 4 players.", List.of("First play may run longer"),
+            Instant.now());
 
     @BeforeEach
     void setUp() {
@@ -42,8 +49,10 @@ class SubmitFeedbackUseCaseTest {
         estimatePersistence.save(EXISTING_ESTIMATE);
         feedbackPersistence = new FakeFeedbackPersistence();
         fakeAnalytics = new FakeAnalytics();
+        fakeEventSink = new FakeEventSink();
 
-        useCase = new SubmitFeedbackUseCase(estimatePersistence, feedbackPersistence, fakeAnalytics);
+        useCase = new SubmitFeedbackUseCase(estimatePersistence, feedbackPersistence,
+                fakeAnalytics, fakeEventSink);
     }
 
     @Test
@@ -80,12 +89,65 @@ class SubmitFeedbackUseCaseTest {
     }
 
     @Test
+    void feedbackHasTimestamp() {
+        var request = new FeedbackRequest("est_abc123", 25, 80, null);
+
+        FeedbackResponse result = useCase.execute(request);
+
+        Feedback stored = feedbackPersistence.stored.get(result.feedbackId());
+        assertNotNull(stored.createdAt());
+    }
+
+    @Test
     void returnsNullForUnknownEstimate() {
         var request = new FeedbackRequest("est_nonexistent", 25, 80, null);
 
         FeedbackResponse result = useCase.execute(request);
 
         assertNull(result);
+    }
+
+    @Test
+    void rejectsZeroActualTeachMinutes() {
+        var request = new FeedbackRequest("est_abc123", 0, 80, null);
+
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
+    }
+
+    @Test
+    void rejectsNegativeActualTeachMinutes() {
+        var request = new FeedbackRequest("est_abc123", -5, 80, null);
+
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
+    }
+
+    @Test
+    void rejectsZeroActualPlayMinutes() {
+        var request = new FeedbackRequest("est_abc123", 25, 0, null);
+
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
+    }
+
+    @Test
+    void rejectsNegativeActualPlayMinutes() {
+        var request = new FeedbackRequest("est_abc123", 25, -10, null);
+
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
+    }
+
+    @Test
+    void emitsFeedbackSubmittedEvent() {
+        var request = new FeedbackRequest("est_abc123", 25, 80, null);
+
+        useCase.execute(request);
+
+        assertEquals(1, fakeEventSink.events.size());
+        Event event = fakeEventSink.events.get(0);
+        assertEquals(EventType.FEEDBACK_SUBMITTED, event.type());
+        assertEquals("est_abc123", event.payload().get("estimateId"));
+        assertEquals("25", event.payload().get("actualTeachMinutes"));
+        assertEquals("80", event.payload().get("actualPlayMinutes"));
+        assertNotNull(event.payload().get("feedbackId"));
     }
 
     // --- Test doubles ---
@@ -110,6 +172,27 @@ class SubmitFeedbackUseCaseTest {
         @Override
         public void save(Feedback feedback) {
             stored.put(feedback.feedbackId(), feedback);
+        }
+
+        @Override
+        public Optional<Feedback> findFeedbackById(String feedbackId) {
+            return Optional.ofNullable(stored.get(feedbackId));
+        }
+
+        @Override
+        public Optional<Feedback> findByEstimateId(String estimateId) {
+            return stored.values().stream()
+                    .filter(f -> f.estimateId().equals(estimateId))
+                    .findFirst();
+        }
+    }
+
+    static class FakeEventSink implements EventSinkPort {
+        final List<Event> events = new ArrayList<>();
+
+        @Override
+        public void publish(Event event) {
+            events.add(event);
         }
     }
 
