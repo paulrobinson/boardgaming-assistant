@@ -9,7 +9,7 @@ struct HomeView: View {
 
             Image(systemName: "dice.fill")
                 .font(.system(size: 72))
-                .foregroundStyle(.accent)
+                .foregroundStyle(.tint)
 
             Text("Board Game\nSession Timer")
                 .font(.largeTitle.bold())

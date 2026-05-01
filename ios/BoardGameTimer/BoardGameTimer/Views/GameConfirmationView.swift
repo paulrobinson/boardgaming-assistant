@@ -8,7 +8,7 @@ struct GameConfirmationView: View {
         VStack(spacing: 24) {
             Image(systemName: "puzzlepiece.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.accent)
+                .foregroundStyle(.tint)
 
             Text(scan.name ?? "Unknown Game")
                 .font(.title.bold())
