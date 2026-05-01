@@ -4,8 +4,11 @@ import com.boardgaming.assistant.application.dto.FeedbackRequest;
 import com.boardgaming.assistant.application.dto.FeedbackResponse;
 import com.boardgaming.assistant.application.port.out.AnalyticsPort;
 import com.boardgaming.assistant.application.port.out.EstimatePersistencePort;
+import com.boardgaming.assistant.application.port.out.EventSinkPort;
 import com.boardgaming.assistant.application.port.out.FeedbackPersistencePort;
 import com.boardgaming.assistant.domain.model.Confidence;
+import com.boardgaming.assistant.domain.model.Event;
+import com.boardgaming.assistant.domain.model.EventType;
 import com.boardgaming.assistant.domain.model.Feedback;
 import com.boardgaming.assistant.domain.model.PlayerCountFit;
 import com.boardgaming.assistant.domain.model.Fit;
@@ -32,6 +35,7 @@ class SubmitFeedbackUseCaseTest {
     private FakeEstimatePersistence estimatePersistence;
     private FakeFeedbackPersistence feedbackPersistence;
     private FakeAnalytics fakeAnalytics;
+    private FakeEventSink fakeEventSink;
 
     private static final SessionTimingEstimate EXISTING_ESTIMATE = new SessionTimingEstimate(
             "est_abc123", "catan", 20, 70, 90, Confidence.MEDIUM,
@@ -45,8 +49,10 @@ class SubmitFeedbackUseCaseTest {
         estimatePersistence.save(EXISTING_ESTIMATE);
         feedbackPersistence = new FakeFeedbackPersistence();
         fakeAnalytics = new FakeAnalytics();
+        fakeEventSink = new FakeEventSink();
 
-        useCase = new SubmitFeedbackUseCase(estimatePersistence, feedbackPersistence, fakeAnalytics);
+        useCase = new SubmitFeedbackUseCase(estimatePersistence, feedbackPersistence,
+                fakeAnalytics, fakeEventSink);
     }
 
     @Test
@@ -129,6 +135,21 @@ class SubmitFeedbackUseCaseTest {
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
     }
 
+    @Test
+    void emitsFeedbackSubmittedEvent() {
+        var request = new FeedbackRequest("est_abc123", 25, 80, null);
+
+        useCase.execute(request);
+
+        assertEquals(1, fakeEventSink.events.size());
+        Event event = fakeEventSink.events.get(0);
+        assertEquals(EventType.FEEDBACK_SUBMITTED, event.type());
+        assertEquals("est_abc123", event.payload().get("estimateId"));
+        assertEquals("25", event.payload().get("actualTeachMinutes"));
+        assertEquals("80", event.payload().get("actualPlayMinutes"));
+        assertNotNull(event.payload().get("feedbackId"));
+    }
+
     // --- Test doubles ---
 
     static class FakeEstimatePersistence implements EstimatePersistencePort {
@@ -163,6 +184,15 @@ class SubmitFeedbackUseCaseTest {
             return stored.values().stream()
                     .filter(f -> f.estimateId().equals(estimateId))
                     .findFirst();
+        }
+    }
+
+    static class FakeEventSink implements EventSinkPort {
+        final List<Event> events = new ArrayList<>();
+
+        @Override
+        public void publish(Event event) {
+            events.add(event);
         }
     }
 
